@@ -35,14 +35,30 @@ int main(int argc, char* argv[]) {
 
 	// So, in order to make the screen appear in blue, we must follow the next:
 
-	SDL_RenderClear(renderer); // Clear the renderer (renderer we want to clear)
+	SDL_RenderClear(renderer); // Clear the renderer (renderer we want to clear) so we can make it all blue
 	SDL_RenderPresent(renderer); // Update renderer (renderer we want to update)
 	//SDL_Delay(5000);              We can put this in order to wait for (some) ms
 
+	/* Now let's make a rectangle appear on the screen. In order to draw something 
+	   you need a rectangle to specify where to draw it and the size of what you are going to draw
+	   To hold it, we use SDL_Rect */
+
+
+
+
+	SDL_Rect rect; //Here we create a rectangle and then we have to declare where we want it and its size
+	rect.x = 240;
+	rect.y = 150;
+	rect.h = 100;
+	rect.w = 120;
+
+	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); //Here we set now the color that the renderer will use to draw (red is rgb 255 0 0)
+	SDL_RenderFillRect(renderer, &rect); //Put the rectangle on the screen we can put "Draw" instead of "Fill", but it will only draw the edges
+	SDL_RenderPresent(renderer); //Render the changes above
 
 
 	/* -------------------------------------------------------------------------------
-	       Until here, open a blue window. Now, let's make the game loop               
+	    Until here, open a blue window and put a rect. Now, let's make the game loop               
        -------------------------------------------------------------------------------
           SDL allows us to create events (SDL_Event) to read an input that is            
           placed in a queue waiting to be processed. By making a SDL_PollEvent           
@@ -51,7 +67,7 @@ int main(int argc, char* argv[]) {
 
 
 	// Let's create a event "e" and a bool to know when we're pressing a key
-
+	
 	SDL_Event e;  
 	bool quit = false;
 
@@ -59,14 +75,29 @@ int main(int argc, char* argv[]) {
 
 		while (SDL_PollEvent(&e)) {
 
-			if (e.type == SDL_KEYDOWN) {
+			if (e.type == SDL_QUIT) { //SDL_QUIT is to the X at the top/right of the screen. Also, SDL_KEYDOWN is to detect a key pressed
 
 				quit = true;
 			}
-
-			SDL_RenderClear(renderer);
-			SDL_RenderPresent(renderer);
 		}
+
+		while (rect.x < 550 || rect.y < 350){
+
+				rect.x++;
+				rect.y++;
+
+				SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+				SDL_RenderClear(renderer);
+				SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+				SDL_RenderFillRect(renderer, &rect);
+				SDL_RenderPresent(renderer);
+				SDL_Delay(10);
+			
+		}
+
+		rect.x = -120;
+		rect.y = -100;
+
 	}
 	
 	return 0;
@@ -74,3 +105,6 @@ int main(int argc, char* argv[]) {
 
 
 //An "int argc, char* argv[]" example: If we open a document, how does Microsoft office knows it? We have passed it through a parameter without knowing it
+
+//Renderer: place to store settings/context. You create a bunch of resources, and hang them off of the renderer;
+//and then when its ready, you tell renderer to put it all together and send the results to the window.
