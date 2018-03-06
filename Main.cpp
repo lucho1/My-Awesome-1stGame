@@ -1,52 +1,14 @@
-#include "SDL/include/SDL.h"   // The"\" slash is only used in windows and is better to use the "/" slash
-#pragma comment(lib, "SDL/libx86/SDL2.lib") // This access the preprocessor directive specifically to the Visual S compiler
-#pragma comment(lib, "SDL/libx86/SDL2main.lib") //So, finally is to access to the library
-
-
-
-/* argc is "argument count" and counts the parameters passed to main. argv is "Arg.
-  Vector" and it stores the parameters passed to main. Remember >>prog 5 6.
-  It's like you're expecting some input arguments. From OS when starting prog */
+#include "SDL/include/SDL.h"  
+#pragma comment(lib, "SDL/libx86/SDL2.lib") 
+#pragma comment(lib, "SDL/libx86/SDL2main.lib") 
 
 int main(int argc, char* argv[]) {       
-	
-	//SDL_Init calls to initiate a subsystem (video in this case). Is a remark. SDL_INIT_VIDEO is a flag (a subsystem)
 
 	SDL_Init(SDL_INIT_VIDEO); 
-
-
-	/* Here we create a command to open a window. See that we create a pointer *window, to point the "surface"...
-	   Now the syntax is: SDL_CreateWindow(char* titleofscreen, int x, int y [coordinates of screen to create it], int width, int height [of the window],
-	   flag [this is to set some properties of the window]) */
-	
-	SDL_Window *window = SDL_CreateWindow("MyAwesomeGame", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 600, 400, SDL_WINDOW_SHOWN); //If I put MINIMIZED doesn't shows the window!!
-	
-	/* Here we will create a renderer to draw to the window. We associate with *window because we will draw on that window previously created
-	   Syntax: SDL_CreateRenderer([window where to draw], index [of rendering driver to be used, -1 to select the first that meets our requirements],
-	   flags [to specify what sort of renderer we want, for example a hardware accelerated renderer]) */
-
+	SDL_Window *window = SDL_CreateWindow("MyAwesomeGame", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 600, 400, SDL_WINDOW_SHOWN);
 	SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
 
-	/* To set a color to the screen we use this command where syntax is:
-	   (renderer where to draw the color, RedValue, GreenValue, BlueValue, AlfaChannel).
-	   Blue is (0, 0, 255, 255) in RGB code.*/
-
-	SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-
-	// So, in order to make the screen appear in blue, we must follow the next:
-
-	SDL_RenderClear(renderer); // Clear the renderer (renderer we want to clear) so we can make it all blue
-	SDL_RenderPresent(renderer); // Update renderer (renderer we want to update)
-	//SDL_Delay(5000);              We can put this in order to wait for (some) ms
-
-	/* Now let's make a rectangle appear on the screen. In order to draw something 
-	   you need a rectangle to specify where to draw it and the size of what you are going to draw
-	   To hold it, we use SDL_Rect */
-
-
-
-
-	SDL_Rect rect; //Here we create a rectangle and then we have to declare where we want it and its size
+	SDL_Rect rect;
 	rect.x = 240;
 	rect.y = 150;
 	rect.h = 100;
@@ -55,24 +17,13 @@ int main(int argc, char* argv[]) {
 	SDL_Rect bullet;
 	bullet.h = 5;
 	bullet.w = 50;
-
-	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); //Here we set now the color that the renderer will use to draw (red is rgb 255 0 0)
-	SDL_RenderFillRect(renderer, &rect); //Put the rectangle on the screen we can put "Draw" instead of "Fill", but it will only draw the edges
-	SDL_RenderPresent(renderer); //Render the changes above
-
-
-	/* -------------------------------------------------------------------------------
-	    Until here, open a blue window and put a rect. Now, let's make the game loop               
-       -------------------------------------------------------------------------------
-          SDL allows us to create events (SDL_Event) to read an input that is            
-          placed in a queue waiting to be processed. By making a SDL_PollEvent           
-          instruction, we put an event in the 1st place of that queue.               */
-
-
-
-	// Let's create a event "e" and a bool to know when we're pressing a key
 	
 	bool quit = false;
+	bool UP = false;
+	bool DOWN = false;
+	bool LEFT = false;
+	bool RIGHT = false;
+	bool SHOOT = false;
 
 	while (!quit){
 
@@ -84,22 +35,28 @@ int main(int argc, char* argv[]) {
 				switch (e.key.keysym.scancode) {
 
 				case SDL_SCANCODE_LEFT:
-					rect.x -= 5;
+					//rect.x -= 5;
+					LEFT = true;
 					break;
 				case SDL_SCANCODE_RIGHT:
-					rect.x += 5;
+					//rect.x += 5;
+					RIGHT = true;
 					break;
 				case SDL_SCANCODE_UP:
-					rect.y -= 5;
+					//rect.y -= 5;
+					UP = true;
 					break;
 				case SDL_SCANCODE_DOWN:
-					rect.y += 5;
+					//rect.y += 5;
+					DOWN = true;
 					break;
 
-				case SDL_SCANCODE_SPACE:
+				/*case SDL_SCANCODE_SPACE:
 					bullet.x = rect.x + 10;
 					bullet.y = rect.y - 10;
-					while (bullet.x < 600) { 
+					SHOOT = true;
+					break;
+					/*while (bullet.x < 600) { 
 						
 						bullet.x++;
 						SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
@@ -107,32 +64,64 @@ int main(int argc, char* argv[]) {
 						SDL_RenderPresent(renderer);
 					
 					}
+					break;*/
 				}
 			}
 
-			else if (e.type == SDL_QUIT ||e.type == SDL_SCANCODE_ESCAPE) { //SDL_QUIT is to the X at the top/right of the screen. Also, SDL_KEYDOWN is to detect a key pressed
+			if (e.type == SDL_KEYUP) {
+
+				switch (e.key.keysym.scancode) {
+
+				case SDL_SCANCODE_LEFT:
+					LEFT = false;
+					break;
+				case SDL_SCANCODE_RIGHT:
+					RIGHT = false;
+					break;
+				case SDL_SCANCODE_UP:
+					UP = false;
+					break;
+				case SDL_SCANCODE_DOWN:;
+					DOWN = false;
+					break;
+
+				/*case SDL_SCANCODE_SPACE:
+					SHOOT = false;
+					break;*/
+				}
+			}
+
+			else if (e.type == SDL_QUIT || e.type == SDL_SCANCODE_ESCAPE) {
 
 				quit = true;
 			}
 		}
 
+		if (UP) { rect.y -= 0.1; }
+		if (DOWN) { rect.y += 0.1; }
+		if (LEFT) { rect.x -= 0.1; }
+		if (RIGHT) { rect.x += 0.1; }
+		
+		/*if (SHOOT) {
+
+			while (bullet.x < 600) {
+
+				bullet.x++;
+			}
+		}*/
+
 		SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
 		SDL_RenderClear(renderer);
+		//SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+		//SDL_RenderFillRect(renderer, &bullet);
 		SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 		SDL_RenderFillRect(renderer, &rect);
 		SDL_RenderPresent(renderer);
-		SDL_Delay(10);
 
 	}
 	
-	SDL_DestroyRenderer(renderer);
+/*	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
-	SDL_Quit();
+	SDL_Quit();*/
 	return 0;
 }
-
-
-//An "int argc, char* argv[]" example: If we open a document, how does Microsoft office knows it? We have passed it through a parameter without knowing it
-
-//Renderer: place to store settings/context. You create a bunch of resources, and hang them off of the renderer;
-//and then when its ready, you tell renderer to put it all together and send the results to the window.
