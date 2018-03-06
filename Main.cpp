@@ -21,12 +21,7 @@ int main(int argc, char* argv[]) {
 	bullet.h = 5;
 	bullet.w = 20;
 	
-	bool quit = false;
-	bool UP = false;
-	bool DOWN = false;
-	bool LEFT = false;
-	bool RIGHT = false;
-	bool SHOOT = false;
+	bool quit = false, UP = false, DOWN = false, LEFT = false, RIGHT = false, SHOOT = false;
 
 	while (!quit) {
 
@@ -79,37 +74,36 @@ int main(int argc, char* argv[]) {
 				}
 			}
 
-			else if (e.type == SDL_QUIT || e.type == SDL_SCANCODE_ESCAPE) {
+			if (e.type == SDL_QUIT || e.type == SDL_SCANCODE_ESCAPE) {
 
 				quit = true;
 			}
-
-			if (UP == true) { rect.y -= 5; }
-			if (DOWN == true) { rect.y += 5; }
-			if (LEFT == true) { rect.x -= 5; }
-			if (RIGHT == true) { rect.x += 5; }
-
-			if (SHOOT == true) {
-
-				bullet.x = rect.x + 10;
-				bullet.y = rect.y - 10;
-				while (bullet.x < 600) {
-
-					SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-					SDL_RenderFillRect(renderer, &bullet);
-					SDL_RenderPresent(renderer);
-					
-					bullet.x++;
-				}
-			}
-
-			SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-			SDL_RenderClear(renderer);
-			SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-			SDL_RenderFillRect(renderer, &rect);
-			SDL_RenderPresent(renderer);
-
 		}
+
+		if (UP == true) { rect.y -= 0.5; }
+		if (DOWN == true) { rect.y += 0.5; }
+		if (LEFT == true) { rect.x -= 0.5; }
+		if (RIGHT == true) { rect.x += 0.5; }
+
+		if (SHOOT == true) {
+
+			bullet.x = rect.x;
+			bullet.y = rect.y -2;
+			while (bullet.x < 600) {
+
+				SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+				SDL_RenderFillRect(renderer, &bullet);
+				SDL_RenderPresent(renderer);
+				bullet.x++;
+			}
+		}
+
+		SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+		SDL_RenderClear(renderer);
+		SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+		SDL_RenderFillRect(renderer, &rect);
+		SDL_RenderPresent(renderer);
+
 	}
 	
 	SDL_DestroyRenderer(renderer);
